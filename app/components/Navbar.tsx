@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function Navbar() {
@@ -30,19 +31,11 @@ export default function Navbar() {
           {/* If logged out */}
           {!session && status !== "loading" && (
             <>
-              <button
-                onClick={() => signIn()}
-                className="rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100"
-              >
-                Login
-              </button>
+             <Link href="/login">
+  Login
+</Link>
 
-              <button
-                onClick={() => signIn()}
-                className="rounded-xl bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-              >
-                Get Started
-              </button>
+             <Link href="/register">Get Started</Link>
             </>
           )}
 

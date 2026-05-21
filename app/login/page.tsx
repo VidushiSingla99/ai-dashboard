@@ -15,6 +15,7 @@ export default function LoginPage() {
       email,
       password,
       redirect: false,
+      callbackUrl: "/dashboard",
     });
 
     if (result?.ok) {
