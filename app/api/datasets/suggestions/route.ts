@@ -1,9 +1,6 @@
 import { prisma } from "@/lib/prisma";
-
 import { getServerSession } from "next-auth";
-
 import { authOptions } from "@/lib/auth";
-
 import { generateChartSuggestions } from "@/lib/chartSuggestions";
 
 export async function GET() {
@@ -11,49 +8,32 @@ export async function GET() {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
-      return Response.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
-      where: {
-        email: session.user.email,
-      },
+      where: { email: session.user.email },
     });
 
     if (!user) {
-      return Response.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+      return Response.json({ error: "User not found" }, { status: 404 });
     }
 
     const dataset = await prisma.dataset.findFirst({
-      where: {
-        userId: user.id,
-      },
-
-      orderBy: {
-        createdAt: "desc",
-      },
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
     });
 
-    if (!dataset || !dataset.data || !dataset.headers) {
-      return Response.json(
-        { error: "No dataset found" },
-        { status: 404 }
-      );
+    if (!dataset?.headers || !dataset?.data) {
+      return Response.json({ error: "No dataset found" }, { status: 404 });
     }
 
-    const result = generateChartSuggestions(
+    const result = await generateChartSuggestions(
       dataset.headers as string[],
       dataset.data as Record<string, string>[]
     );
 
     return Response.json(result);
-
   } catch (error) {
     console.error(error);
 

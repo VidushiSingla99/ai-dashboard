@@ -6,7 +6,6 @@ export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
-
       credentials: {
         email: {},
         password: {},
@@ -23,12 +22,12 @@ export const authOptions = {
 
         if (!user) return null;
 
-        const match = await bcrypt.compare(
+        const isValid = await bcrypt.compare(
           credentials.password,
           user.password
         );
 
-        if (!match) return null;
+        if (!isValid) return null;
 
         return {
           id: user.id,
