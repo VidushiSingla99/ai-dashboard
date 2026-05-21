@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  jobTitle  String?
+  company   String?
+  bio       String?
+
+  datasets  Dataset[]
+  charts    SavedChart[]
+}
+
+model Dataset {
+  id        String   @id @default(cuid())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  fileName  String
+
+  headers   Json
+
+  data      Json?
+
+  rowCount  Int
+
+  createdAt DateTime @default(now())
+
+  charts    SavedChart[]
+
+  @@index([userId])
+}
+
+model SavedChart {
+  id         String   @id @default(cuid())
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+
+  datasetId  String
+  dataset    Dataset  @relation(fields: [datasetId], references: [id])
+
+  type       String
+
+  title      String
+
+  xAxis      String
+
+  yAxis      String
+
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+}
